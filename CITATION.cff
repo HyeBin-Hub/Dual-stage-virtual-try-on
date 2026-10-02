@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "Please cite the research article when using this project."
+title: "Dual-stage virtual try-on research code"
+type: software
+repository-code: "https://github.com/HyeBin-Hub/Dual-stage-virtual-try-on"
+authors:
+  - family-names: Lee
+    given-names: Hyebean
+url: "https://github.com/HyeBin-Hub/Dual-stage-virtual-try-on"
+preferred-citation:
+  type: article
+  title: "Dual-Stage Detail-Preserving Virtual Try-On Network With Geometric Refinement and Multi-Scale Feature Integration"
+  authors:
+    - family-names: Lee
+      given-names: Hyebean
+    - family-names: Jeong
+      given-names: Dasol
+    - family-names: Park
+      given-names: Jiwon
+    - family-names: Han
+      given-names: Seunghee
+    - family-names: Jang
+      given-names: Jinbeum
+    - family-names: Paik
+      given-names: Joonki
+  journal: IEEE Access
+  year: 2025
+  volume: 13
+  start: 88557
+  end: 88572
+  url: "https://ieeexplore.ieee.org/document/11005534/"
