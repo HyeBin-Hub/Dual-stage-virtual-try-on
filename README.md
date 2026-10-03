@@ -10,7 +10,7 @@
 **논문:** *Dual-Stage Detail-Preserving Virtual Try-On Network With Geometric Refinement and Multi-Scale Feature Integration*, IEEE Access, vol. 13, pp. 88557-88572, 2025.  
 [IEEE 논문](https://ieeexplore.ieee.org/document/11005534/) | [모델 구조와 코드](docs/architecture.md) | [실행 안내](docs/reproduction.md) | [추가로 필요한 자료](docs/missing-assets.md)
 
-> 이 저장소는 제공된 연구 코드를 정리한 버전입니다. GMM의 해상도 의존 계층을 수정해 256 x 192와 논문 해상도인 512 x 384를 지원하며, 두 크기의 텐서 실행을 확인했습니다. 학습 가중치와 당시의 정확한 실험 설정은 포함되지 않았습니다. 아래 성능은 논문에 보고된 수치로, 이 저장소에서 새로 재현한 결과가 아닙니다.
+> 이 저장소는 제공된 연구 코드를 정리한 버전입니다. GMM의 해상도 의존 계층을 수정해 256 x 192와 논문 해상도인 512 x 384를 지원하며, 두 크기의 GMM 전체 forward와 데이터 로더를 CPU에서 확인했습니다. TOM 전체 forward와 GPU 추론은 아직 검증하지 않았습니다. 학습 가중치와 당시의 정확한 실험 설정은 포함되지 않았습니다. 아래 성능은 논문에 보고된 수치로, 이 저장소에서 새로 재현한 결과가 아닙니다.
 
 ## 연구에서 수행한 일
 
@@ -99,6 +99,6 @@ python tools/check_assets.py \
 
 ## 검증 상태와 출처
 
-Python 문법 검사와 15개 테스트를 수행했습니다. 두 해상도의 GMM 전체 forward, 회귀 계층과 TPS 역전파, 데이터 로딩 및 checkpoint 저장과 로딩을 CPU에서 확인했습니다. 256 회귀 계층은 동일 가중치에서 원본과 출력이 일치합니다. 실제 학습 가중치의 호환성, GPU 학습과 추론, 논문 성능 재현은 미확인입니다. [검증 기록과 수정 범위](docs/validation.md)에서 확인할 수 있습니다.
+Python 문법 검사와 15개 테스트를 수행했습니다. 두 해상도의 GMM 전체 forward, 회귀 계층과 TPS 역전파, 데이터 로딩 및 checkpoint 저장과 로딩을 CPU에서 확인했습니다. 256 회귀 계층은 동일 가중치에서 원본과 출력이 일치합니다. 추가로 제공된 TOM 가중치 세 개는 현재 전체 TOM과 구조가 달라 직접 사용할 수 없습니다. 하나에는 BatchNorm 통계의 무한값도 있습니다. 이는 해상도 옵션 변경으로 해결되는 문제가 아닙니다. [가중치 호환성 확인](docs/checkpoint-compatibility.md)에 차이를 기록했습니다. TOM 전체 forward, GPU 학습과 추론, 논문 성능 재현은 미수행입니다. [검증 기록과 수정 범위](docs/validation.md)에서 확인할 수 있습니다.
 
 기존 CP-VTON 기반 코드와 외부 모델의 구성 요소를 활용했습니다. 연구의 기여는 각 구성 요소를 과제에 맞게 수정하고 두 단계 모델로 설계해 실험한 데 있습니다. 원본 `LICENSE`와 코드의 출처 표기는 유지했습니다. [참고 구현과 출처](THIRD_PARTY_NOTICES.md)를 참고하세요.

@@ -5,8 +5,8 @@
 | 우선순위 | 필요한 파일 또는 자료 | 확인 상태 | 필요한 이유 |
 | --- | --- | --- | --- |
 | 1 | GGAM / GMM 최종 `.pth`와 대응 설정 | 코드 묶음에 미포함. 드라이브에 256 / 512 checkpoint 폴더는 있으나 연결을 통해 실제 가중치 파일을 확인하지 못함 | 정렬 추론과 기존 결과 검증 |
-| 1 | GBFM / TOM 최종 `.pth`와 대응 설정 | 코드 묶음에 미포함. 256 / 512-2 checkpoint 폴더만 확인 | 합성 추론, 모델 조합 확인 |
-| 1 | 논문 실험 당시의 512 x 384 설정과 실행 명령 | 현재 코드는 두 해상도를 지원하도록 수정하고 텐서 실행을 확인. 당시의 최종 실험 설정은 미포함 | 정확한 가중치, grid_size, 손실과 학습 조건의 대응 확인 |
+| 1 | GBFM / TOM 최종 `.pth`와 대응 설정 | 추가로 제공된 TOM 가중치 세 개를 검사했으나 모두 현재 전체 TOM과 구조 불일치. `tom_final(2).pth`에는 BatchNorm 무한값도 있음. [검사 결과](checkpoint-compatibility.md) 참고 | 현재 모델과 일치하는 최종 가중치 또는 제공 가중치를 학습한 모델 코드와 설정 확보 |
+| 1 | 논문 실험 당시의 512 x 384 설정과 실행 명령 | GMM은 두 해상도를 지원하도록 수정하고 전체 forward를 확인. TOM 전체 실행은 미검증. 당시의 최종 실험 설정은 미포함 | 정확한 가중치, grid_size, 손실과 학습 조건의 대응 확인 |
 | 1 | 수정한 pair list 세 파일 | 코드 묶음에 미포함. 별도 Dresscode-512 root에서 `train_pairs_modified.txt`, `test_pairs_paired_modified.txt`, `test_pairs_unpaired_modified.txt`는 발견 | 실제 학습과 paired / unpaired 대상 확정 |
 | 1 | 학습용 `cloth_gt` 정답 마스크와 생성 방식 | 코드 묶음에 미포함. 별도 Dresscode-512/train에서 폴더 존재 확인 | 학습 loop의 mask supervision, 파일명 대응 확인 |
 | 2 | `agnostic-v3.2`, `image_parse`, `skeletons`, `keypoints`, `cloth_deformation`, `cloth_mask_deformation`, `images` | 별도 Dresscode-512/train에서 폴더 존재 확인. 개별 데이터와 완전성 미검증 | 현재 로더의 입력 계약 충족 |

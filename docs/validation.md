@@ -18,12 +18,28 @@
 | 256 원본 호환성 | archive의 원본 회귀 클래스를 직접 구성. parameter key와 크기가 같고 동일 가중치 / 입력에서 출력이 정확히 일치 |
 | 입력 오류 | 모델 입력의 채널 또는 크기가 선택한 해상도와 다르면 특징 추출 전에 오류 처리 |
 | 문서 | 상대 링크, 이미지 경로, 논문 표 수치와 실행 옵션 대응 검사 |
-| TOM 전체 forward / GPU 학습과 추론 | 미수행. CUDA GPU와 최종 학습 가중치가 제공되지 않음 |
+| 제공 TOM checkpoint | 세 파일의 key, tensor 크기와 유한값 검사. 모두 현재 전체 TOM과 불일치. 자세한 결과는 `checkpoint-compatibility.md` 참고 |
+| TOM 전체 forward / GPU 학습과 추론 | 미수행. CUDA GPU가 없고 현재 전체 TOM과 호환되는 최종 가중치도 확보하지 못함 |
 | 논문 성능 재현 | 미수행. 최종 가중치, 실험 설정, split과 원시 로그가 필요 |
 
 총 15개 테스트를 통과했습니다. 실행 환경은 Python 3.12.14, PyTorch 2.5.1+cpu, torchvision 0.20.1+cpu입니다. 저장소의 Python 3.10 / torch 2.1.2 의존성 후보와 별도의 CPU 검증 환경이며, 원본 학습 환경을 복원한 것은 아닙니다.
 
 모델 테스트는 무작위 입력과 초기 가중치를 사용합니다. 데이터 로더 테스트의 이미지는 합성 fixture입니다. 실제 가상 착용 결과의 품질이나 논문 수치를 검증한 결과가 아닙니다. `grid_sample`의 `align_corners`는 원본처럼 명시하지 않았고, 검증 환경의 기본값인 `False`로 실행됐습니다.
+
+## 해상도 지원 범위
+
+크기 표기는 높이 x 너비입니다. 실행 옵션과 실제 전처리된 이미지, 마스크의 크기가 같아야 합니다.
+
+| 설정 | GMM correlation 채널 | GMM linear 입력 수 | 확인한 실행 |
+| --- | ---: | ---: | --- |
+| 256 x 192 | 192 | 768 | GMM 전체 forward, 회귀와 TPS 역전파, 데이터 로더 |
+| 512 x 384 | 768 | 3072 | GMM 전체 forward, 회귀와 TPS 역전파, 데이터 로더 |
+
+correlation 채널은 `(H // 16) * (W // 16)`, linear 입력 수는 `64 * (H // 64) * (W // 64)`로 계산합니다. 256 고정 크기를 512 입력에 적용하던 GMM 오류를 수정했습니다. 두 크기만 지원하며 임의 해상도나 전체 TOM의 두 해상도 실행까지 확인한 것은 아닙니다.
+
+기본 실행 옵션은 256 x 192입니다. 512 x 384에는 `--fine_height 512 --fine_width 384`를 지정하고 같은 해상도의 데이터와 GMM checkpoint를 사용해야 합니다. 256 GMM 가중치의 회귀 계층은 512 GMM과 크기가 달라 직접 불러올 수 없습니다.
+
+제공 TOM 가중치의 encoder, fusion과 attention head 차이는 위 GMM 해상도 문제와 구분해야 합니다. 입력 크기 옵션만 바꿔도 현재 전체 TOM과 호환되지는 않습니다.
 
 ## 수정 범위
 
@@ -34,6 +50,7 @@
 | 모델 입력과 데이터 파일의 크기 검사 | 이미지, 마스크, 실행 옵션이 섞였을 때 원인과 파일을 안내 |
 | 흑백 shape / pose에 1채널 정규화 적용 | RGB 정규화의 broadcast 오류 해결. 원본과 같은 [-1, 1] 범위 유지 |
 | TPS tensor를 비영구 buffer로 등록 | 모델의 device / dtype 이동을 따르며 기존 checkpoint key 유지 |
+| checkpoint 오류 안내 | GMM은 해상도와 grid_size, TOM은 모델 구조와 attention head를 확인하도록 안내 |
 | checkpoint 크기 검사와 device 유지 | 해상도가 다른 회귀 가중치를 설명과 함께 거부. 저장 / 로딩이 live model을 다른 device로 옮기지 않도록 수정 |
 | 데이터 로더의 GMM `cloth_mask` 반환 복구 | 기존 추론과 학습이 접근하는 키가 주석 처리되어 있었음 |
 | 학습용 `gt_cltoh_warp_mask` 로딩과 반환 복구 | 학습 loop에서 사용하는 key가 빠져 있었음. 없으면 명확히 실패 |

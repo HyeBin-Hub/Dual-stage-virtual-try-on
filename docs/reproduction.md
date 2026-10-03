@@ -4,6 +4,8 @@
 
 256 x 192를 사용할 때는 데이터 root를 해당 전처리 폴더로 바꾸고 `--fine_height 256 --fine_width 192`를 지정합니다. 옵션을 생략하면 256 x 192가 기본값입니다. GMM의 checkpoint는 선택한 해상도로 학습한 파일이어야 합니다. 256 GMM checkpoint를 512 GMM에 직접 불러올 수 없으므로 512 가중치를 확보하거나 512 설정으로 새로 학습해야 합니다.
 
+TOM의 해상도 옵션을 전달하는 경로는 포함되어 있지만, TOM 전체 forward와 GPU 추론은 아직 검증하지 않았습니다. 추가로 제공된 `tom_final.pth`, `tom_final(1).pth`, `tom_final(2).pth`는 모두 현재 전체 TOM과 구조가 달라 아래 TOM 추론 명령에 그대로 사용할 수 없습니다. [가중치 호환성 확인](checkpoint-compatibility.md)을 참고하고 현재 모델과 일치하는 checkpoint를 준비하세요. 아래의 `checkpoints/tom/tom_final.pth`는 호환되는 가중치를 놓을 예시 경로입니다.
+
 ## 데이터 계약
 
 pair list는 데이터 root 아래에 두고 각 줄을 `person_filename garment_filename`의 두 열로 구성합니다. 현재 로더는 JPG 인물 파일명을 기준으로 parsing과 JSON 파일명을 만듭니다. 모든 이미지와 마스크의 실제 크기는 실행 옵션과 일치해야 합니다. 로더는 크기가 다른 파일의 경로와 기대 크기를 오류로 안내합니다. 자동 리사이즈는 하지 않으므로 parsing label과 pose 좌표에 맞춰 전처리한 데이터를 사용하세요.

@@ -359,10 +359,16 @@ def load_checkpoint(model, checkpoint_path):
     if mismatches:
         resolution = getattr(model, 'input_size', None)
         detail = f' Selected GMM resolution is {resolution[0]}x{resolution[1]}.' if resolution else ''
+        if isinstance(model, (GMM, FeatureRegression)):
+            guidance = (
+                'Use weights trained with the selected resolution and grid_size, or train a new model. '
+                '256x192 GMM weights cannot be loaded directly into a 512x384 GMM.'
+            )
+        else:
+            guidance = 'Use weights trained with this model architecture. Check the encoder and attention head configuration.'
         raise ValueError(
             'Checkpoint tensor shapes do not match the model.' + detail + '\n'
             + '\n'.join(mismatches[:8]) + '\n'
-            + 'Use weights trained with the selected resolution and grid_size, or train a new model. '
-            '256x192 GMM weights cannot be loaded directly into a 512x384 GMM.'
+            + guidance
         )
     model.load_state_dict(state)
